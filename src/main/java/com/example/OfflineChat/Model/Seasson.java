@@ -17,6 +17,11 @@ public class Seasson {
         this.userId = userId;
         this.conversations = new ArrayList<>();
     }
+    public Seasson(String seassonId,String userId) {
+        this.userId = userId;
+        this.id = seassonId;
+        this.conversations = new ArrayList<>();
+    }
 
 
 
