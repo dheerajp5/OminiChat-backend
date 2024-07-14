@@ -2,6 +2,7 @@ package com.example.OfflineChat.controller;
 
 import com.example.OfflineChat.Model.Seasson;
 import com.example.OfflineChat.Model.User;
+import com.example.OfflineChat.Response.ApiResponse;
 import com.example.OfflineChat.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 //@CrossOrigin(origins = "http://localhost:5173/")
@@ -40,25 +43,13 @@ public class UserController {
 
     }
 
-    @GetMapping("/")
-    public User findUserByid(@RequestParam(value = "id") String id) {
-
-        User user;
-        try {
-            user = serverice.getUserById(id);
-        }catch (UncategorizedMongoDbException e) {
-            throw  e;
-        }
-        return user;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> findUserByPhoneNumber(@RequestBody User phone) {
         System.out.println(phone.getPhone());
 
         try {
-            User user =  serverice.findUserByPhoneNUmber(phone.getPhone());
-            if(user == null) throw new Exception("User not Found");
+           ApiResponse user =  serverice.findUserByPhoneNUmber(phone.getPhone());
             return new ResponseEntity(user,HttpStatus.OK);
         }
         catch (Exception  e ) {
@@ -68,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/name")
-    public User findByName(@RequestBody  User name) {
+    public ApiResponse findByName(@RequestBody  User name) {
         return serverice.findUserByName(name.getName());
     }
 

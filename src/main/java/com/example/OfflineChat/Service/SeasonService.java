@@ -3,6 +3,7 @@ package com.example.OfflineChat.Service;
 import com.example.OfflineChat.Model.Conersation;
 import com.example.OfflineChat.Model.Seasson;
 import com.example.OfflineChat.Repository.SessionRepository;
+import com.example.OfflineChat.Response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,10 @@ public class SeasonService {
 
     }
 
-    public List<Seasson> getAllSeassons(String userId) {
-        return repository.findAllByUserId(userId);
+    public ApiResponse getAllSeassons(String userId) {
+        Optional<List<Seasson>> sc = repository.findAllByUserId(userId);
+        if(sc.isEmpty()) return new ApiResponse(true, "season not found", null);
+        return new ApiResponse(true,"season Found", sc);
     }
 
     public Seasson addConversation(String seassonId, Conersation conversation) {

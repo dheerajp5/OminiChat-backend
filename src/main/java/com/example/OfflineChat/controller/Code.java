@@ -1,6 +1,7 @@
 package com.example.OfflineChat.controller;
 import com.example.OfflineChat.Model.Conersation;
 import com.example.OfflineChat.Model.Seasson;
+import com.example.OfflineChat.Response.ApiResponse;
 import com.example.OfflineChat.Service.SeasonService;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,12 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
- @Setter
+
+@Setter
  class Res {
      // Getters and Setters
      @Getter
@@ -75,6 +78,8 @@ public class Code {
     public ResponseEntity<?> getResponse(@RequestBody Res message) {
         this.prompt = message.getPrompt();
 
+
+
             if(message.getSessionId() != null && !message.getSessionId().isEmpty()) {
             seasson = seasonService.getSeasson(message.getSessionId());
                 System.out.println("season is found ");
@@ -119,7 +124,9 @@ public class Code {
                    for(int i= 0; i< responses.size(); i++) {
                        s+= responses.get(i);
                    }
-                   seasonService.addConversation(sessionId, new Conersation(this.prompt,s));
+                    var se = seasonService.addConversation(sessionId, new Conersation(this.prompt,s));
+                    System.out.println("Added Conversation");
+
                 });
     }
 
@@ -129,12 +136,8 @@ public class Code {
     public ResponseEntity<?> getHistory(@RequestBody Res r) {
         String userid = r.getUserId();
         System.out.println("History User id " + userid);
-        if(userid == null || userid.isEmpty() )  return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
 
-        List<Seasson> seassons = seasonService.getAllSeassons(userid);
-
-        if(!seassons.isEmpty()) return  new ResponseEntity<>(seassons,HttpStatus.OK);
-
-         return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
+       ApiResponse seassons = seasonService.getAllSeassons(userid);
+         return new ResponseEntity<>(seassons,HttpStatus.OK);
     }
 }

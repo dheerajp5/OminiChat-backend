@@ -1,13 +1,17 @@
 package com.example.OfflineChat.Service;
 
+import com.example.OfflineChat.Exceptions.CustomException.UserNotFound;
 import com.example.OfflineChat.Model.User;
 import com.example.OfflineChat.Repository.UserRepositry;
+import com.example.OfflineChat.Response.ApiResponse;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
@@ -23,20 +27,26 @@ public class UserService {
         return repositry.save(user);
     }
 
-    public User getUserById(String id) {
+    public ApiResponse getUserById(String id) {
+       User foundUser = repositry.findById(id).get();
+       Optional<User> user = Optional.of(foundUser);
+       if(user.isEmpty())  throw new UserNotFound("User not found.");
 
-        return repositry.findById(id).get();
+       return new ApiResponse(true, "User found", user);
+
     }
 
-    public User findUserByPhoneNUmber(String phone) {
-        User u =  repositry.findByPhone(phone);
+    public ApiResponse findUserByPhoneNUmber(String phone) {
+        Optional<User> user = repositry.findByPhone(phone);
 
-        return u;
+        if(user.isEmpty())  throw new UserNotFound("User with phone number " + phone + " not found.");
+
+        return new ApiResponse(true,"User Found",user );
     }
 
-    public User findUserByName(String name) {
-       return repositry.findByName(name);
-
-
+    public ApiResponse findUserByName(String name) {
+      Optional<User> user =  repositry.findByName(name);
+        if(user.isEmpty())  throw new UserNotFound("User with phone number " + name + " not found.");
+        return new ApiResponse(true,"User Found",user );
     }
 }
